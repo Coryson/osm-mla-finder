@@ -3,7 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 import pandas as pd
-from urllib.parse import urlparse
 from typing import List
 import logging
 
@@ -16,7 +15,7 @@ if not logger.hasHandlers():
     handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     logger.addHandler(handler)
 
-# Keywords for MLA relevance werden nun aus externer Datei geladen
+# Keywords for MLA relevance are now loaded from an external file
 def load_mla_keywords(filepath: str) -> list:
     with open(filepath, encoding='utf-8') as f:
         return [line.strip() for line in f if line.strip() and not line.startswith('#')]
