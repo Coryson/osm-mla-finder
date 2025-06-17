@@ -21,7 +21,7 @@ class ColorFormatter(logging.Formatter):
     }
     PREFIXES = {
         'DEBUG': '[DEBUG]',
-        'INFO': '[LOG]',
+        'INFO': '[INFO]',
         'WARNING': '[WARN]',
         'ERROR': '[ERROR]',
         'CRITICAL': '[CRITICAL]'
@@ -29,7 +29,7 @@ class ColorFormatter(logging.Formatter):
     def format(self, record):
         color = self.COLORS.get(record.levelname, '')
         reset = self.COLORS['RESET']
-        prefix = self.PREFIXES.get(record.levelname, '[LOG]')
+        prefix = self.PREFIXES.get(record.levelname, '[INFO]')
         message = super().format(record)
         # Only color the prefix
         return f"{color}{prefix}{reset} {message}"
