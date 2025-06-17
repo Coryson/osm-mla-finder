@@ -15,11 +15,12 @@ if not logger.handlers:
     handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     logger.addHandler(handler)
 
-# Keywords for MLA relevance
-MLA_KEYWORDS = [
-    "mla", "medizinisch-technischer assistent", "labor", "stellenangebot", "ausbildung",
-    "laboratory", "medical laboratory", "job", "career", "vacancy", "technician"
-]
+# Keywords for MLA relevance werden nun aus externer Datei geladen
+def load_mla_keywords(filepath: str) -> list:
+    with open(filepath, encoding='utf-8') as f:
+        return [line.strip() for line in f if line.strip() and not line.startswith('#')]
+
+MLA_KEYWORDS = load_mla_keywords(os.path.join(os.path.dirname(__file__), 'mla_keywords.txt'))
 
 # Helper: check if a website is reachable and HTML
 def is_website_reachable(url: str) -> bool:
