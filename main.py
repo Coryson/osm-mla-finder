@@ -288,7 +288,7 @@ def main() -> None:
         parser = argparse.ArgumentParser(description='Extracts MLA-relevant facilities from OSM data')
         parser.add_argument('--input', '-i', required=True, help='Path to input OSM file (.pbf or .osm)')
         parser.add_argument('--output', '-o', help='Output directory for CSV files (default: ./output)')
-        parser.add_argument('--batch-size', type=int, default=1000,
+        parser.add_argument('--batch-size', type=int, default=5000,
                           help='Number of entries to accumulate in memory before writing to disk')
         parser.add_argument('--no-web', action='store_true',
                           help='Skip web scraping for additional data (faster but less complete)')
@@ -321,9 +321,12 @@ def main() -> None:
         
         # Load results for further processing
         try:
+            if not os.path.isfile(output_file) or os.path.getsize(output_file) == 0:
+                logger.error(f"Output file {output_file} is missing or empty. No facilities to post-process.")
+                return
             df = pd.read_csv(output_file, encoding='utf-8-sig')
             logger.info(f"Successfully {len(df)} facilities loaded")
-            
+
             if not args.no_web:
                 logger.info("Starting website verification and MLA relevance enrichment...")
                 from filter import enrich_and_filter
@@ -331,7 +334,9 @@ def main() -> None:
                 output_csv = os.path.join(os.path.dirname(output_file), 'facilities_verified.csv')
                 enrich_and_filter(input_csv, output_csv, os.getenv('SERPAPI_KEY'))
                 logger.info(f"Verified facilities written to: {output_csv}")
-                
+
+        except pd.errors.EmptyDataError:
+            logger.error(f"CSV file {output_file} is empty or contains no data.")
         except Exception as e:
             logger.error(f"Error during postprocessing: {e}", exc_info=True)
         

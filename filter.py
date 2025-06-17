@@ -9,8 +9,9 @@ import logging
 
 # Set up logging
 logger = logging.getLogger("filter")
-logger.setLevel(logging.INFO)
-if not logger.handlers:
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logger.setLevel(getattr(logging, log_level, logging.INFO))
+if not logger.hasHandlers():
     handler = logging.StreamHandler()
     handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     logger.addHandler(handler)
@@ -20,7 +21,11 @@ def load_mla_keywords(filepath: str) -> list:
     with open(filepath, encoding='utf-8') as f:
         return [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
-MLA_KEYWORDS = load_mla_keywords(os.path.join(os.path.dirname(__file__), 'mla_keywords.txt'))
+try:
+    MLA_KEYWORDS = load_mla_keywords(os.path.join(os.path.dirname(__file__), 'mla_keywords.txt'))
+except Exception as e:
+    logger.error(f"Could not load MLA keywords: {e}")
+    MLA_KEYWORDS = []
 
 # Helper: check if a website is reachable and HTML
 def is_website_reachable(url: str) -> bool:
