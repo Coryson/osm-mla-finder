@@ -21,7 +21,7 @@ def load_mla_keywords(filepath: str) -> list:
         return [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
 try:
-    MLA_KEYWORDS = load_mla_keywords(os.path.join(os.path.dirname(__file__), 'mla_keywords.txt'))
+    MLA_KEYWORDS = load_mla_keywords(os.path.join(os.path.dirname(__file__), 'keywords.txt'))
 except Exception as e:
     logger.error(f"Could not load MLA keywords: {e}")
     MLA_KEYWORDS = []
